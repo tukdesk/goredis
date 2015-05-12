@@ -35,6 +35,8 @@ type Client struct {
 	writeBufferSize int
 	password        string
 
+	dbIndex int
+
 	conns *list.List
 
 	quit chan struct{}
@@ -81,6 +83,10 @@ func (c *Client) SetWriteBufferSize(s int) {
 
 func (c *Client) SetMaxIdleConns(n int) {
 	c.maxIdleConns = n
+}
+
+func (c *Client) SetDBIndex(n int) {
+	c.dbIndex = n
 }
 
 func (c *Client) Do(cmd string, args ...interface{}) (interface{}, error) {
@@ -144,7 +150,7 @@ func (c *Client) get() (co *Conn, err error) {
 	if c.conns.Len() == 0 {
 		c.Unlock()
 
-		co, err = c.newConn(c.addr, c.password)
+		co, err = c.newConn(c.addr, c.password, c.dbIndex)
 	} else {
 		e := c.conns.Front()
 		co = e.Value.(*Conn)

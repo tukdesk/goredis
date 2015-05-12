@@ -169,7 +169,7 @@ func (c *Conn) SendValue(v interface{}) error {
 	}
 }
 
-func (c *Client) newConn(addr string, pass string) (*Conn, error) {
+func (c *Client) newConn(addr string, pass string, index int) (*Conn, error) {
 	co, err := ConnectWithSize(addr, c.readBufferSize, c.writeBufferSize)
 	if err != nil {
 		return nil, err
@@ -181,6 +181,10 @@ func (c *Client) newConn(addr string, pass string) (*Conn, error) {
 			co.Close()
 			return nil, err
 		}
+	}
+
+	if _, err = co.Do("SELECT", index); err != nil {
+		return nil, err
 	}
 
 	return co, nil
