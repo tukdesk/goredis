@@ -184,6 +184,7 @@ func (c *Client) newConn(addr string, pass string, index int) (*Conn, error) {
 	}
 
 	if _, err = co.Do("SELECT", index); err != nil {
+		co.Close()
 		return nil, err
 	}
 
